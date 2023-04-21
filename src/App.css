@@ -46,6 +46,10 @@
   border-bottom-right-radius: 30px;
 }
 
+.rightimagecontainer {
+  border-top-right-radius: 30px;
+  border-bottom-right-radius: 30px;
+}
 .list{
   list-style: none;
   padding: 0;
@@ -76,6 +80,12 @@
   
 }
 
+.list li a:focus,
+.list li a:active,
+.list li a.active {
+  background-color: #7addfd;
+  color: #fff;
+}
 
 .sidebar-item:hover .sidebar-icon,
 .sidebar-item:hover .sidebar-text {
@@ -221,19 +231,24 @@ select{
   text-align: center;
   font-family: 'Poppins';
   font-weight: bolder;
+  background-color: #7addfd;
+  color: white;
+
 }
 
 .my-table td {
   border: 1px solid #ddd;
   padding: 8px;
-  text-align: left;
+  text-align: center;
   font-family: 'Poppins';
   font-weight: lighter;
 }
 
-.my-table th {
-  background-color: #f2f2f2;
+.my-table th, .my-table td {
+  border: none;
+  
 }
+
 
 .checkbox-label {
   position: relative;
@@ -296,3 +311,90 @@ table{
 .selectedsubject{
   font-family: 'Poppins';
 }
+.cards {
+  background-color: white;
+  width: 350px;
+  padding: 20px;
+  margin-top: 100px;
+  border-radius: 8px;
+  box-shadow: 6px 6px 17px -5px #a8a7a9 ;
+  border-bottom: 2px solid blue;
+  margin: 10;
+  margin-right: 30px;
+}
+
+h2{
+  font-family: 'Poppins';
+  color: #6f6f6f; 
+}
+span{
+  color: #6f6f6f; 
+}
+.cards2 {
+  background-color: white;
+  width: 350px;
+  padding: 20px;
+  margin-top: 100px;
+  border-radius: 8px;
+  box-shadow: 6px 6px 17px -5px #a8a7a9 ;
+  border-bottom: 2px solid red;
+  margin: 10;
+  margin-right: 30px;
+}
+.cards3 {
+  background-color: white;
+  width: 350px;
+  padding: 20px;
+  margin-top: 100px;
+  border-radius: 8px;
+  box-shadow: 6px 6px 17px -5px #a8a7a9 ;
+  border-bottom: 2px solid green;
+  margin: 10;
+  margin-right: 30px;
+}
+
+.doughnut {
+  width: 500px;
+  display: inline-block; 
+  background-color: white;
+  border-radius:20px ;
+  padding: 10px;
+  box-shadow: 6px 6px 17px -5px #a8a7a9 ;
+  margin-right: 50px;
+  
+}
+
+.searchbox {
+
+}
+
+.my-table2 {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.my-table2 th {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+  font-family: 'Poppins';
+  font-weight: bolder;
+  background-color: #7addfd;
+  color: white;
+
+}
+
+.my-table2 td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+  font-family: 'Poppins';
+  font-weight: lighter;
+}
+
+.my-table2 th, .my-table2 td {
+  border: none;
+  
+}
+

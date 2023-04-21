@@ -6,6 +6,7 @@ import myImage from '../../image/logo.png'
 import background from '../../image/bg3.jpg'
 import React from "react";
 import '../../App.css'
+import EnrollmentPicture from '../../image/epic.jpg'
 
 
 
@@ -114,6 +115,9 @@ const Login = () => {
             </div>
           </div>
           <div className="rightcontainer" style={styles.rightcontainer}>
+            <div style={{alignItems:'center'}}>
+              <img className="rightimagecontainer" style={{width:500, height:500}} src={EnrollmentPicture}></img>
+            </div>
 
           </div>
           

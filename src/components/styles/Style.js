@@ -93,6 +93,20 @@ const styles = {
         border: 'none',
         boxShadow: '17px 3px 29px 17px rgba(0,0,0,0.1)',
     },
+
+    rightsidebar:{
+        width: '83%',
+        float: 'right',
+        backgroundColor: '#eef0f4',
+        height: 900
+        
+    },
+    subjectrightsidebar:{
+        width: '83%',
+        float: 'right',
+        backgroundColor: '#eef0f4',
+        height: 900
+    }
 }
 
 export default styles;

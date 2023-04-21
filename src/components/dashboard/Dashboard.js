@@ -7,40 +7,170 @@ import { faBook, faPlus, faUserTie, faUser, faRightFromBracket, faClose } from '
 import { faChartLine } from '@fortawesome/free-solid-svg-icons'
 import '../../App.css'
 import 'react-datepicker/dist/react-datepicker.css';
+import { Doughnut } from 'react-chartjs-2';
+import 'chart.js/auto';
+import { CircularProgressbar } from 'react-circular-progressbar';
+import Chart from 'chart.js/auto';
+import 'react-circular-progressbar/dist/styles.css';
 // import { postRequest } from '../api/api'
 
 
-const Dashboard = () =>{
+const Dashboard = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [showSubjectModal, setShowSubjectModal] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedGender, setSelectedGender] = useState('');
-  const [selectedYearLevel, setSelectedYearLevel] = useState('');
-  const [selectedRows, setSelectedRows] = useState([]);
   const [formData, setFormData] = useState({
       firstname: '',
       middlename: '',
       lastname: '',
       suffix: '',
       dateofbirth: '',
-      gender: 'Male',
+      gender: 'M',
       address: '',
       contactnumber: '',
       emailaddress: '',
       lrn: '',
-      yearlevel: '1st Year',
+      yearlevel: '1stYear',
       subject: '',
       subjects: [],
+      selectedSubjects: [],
     })
+    
 
-  const subjectstochoose = [
-    { id: 1, code: 'IT001', subject: 'Introduction to Computing', slot: '6/30' },
-    { id: 2,code: 'IT002', subject: 'Computer Programming', slot: '3/30' },
-    { id: 3,code: 'IT003', subject: 'Data Structure and Algorithm', slot: '2/30' },
-    { id: 4,code: 'IT004', subject: 'Science Technology and Society', slot: '2/30' },
-    { id: 5,code: 'IT005', subject: 'Networking I', slot: '2/30' },
-  ];
+    const [chartData, setChartData] = useState({});
+    const [chartGenderData, setChartGenderData] = useState({});
+    const [countStudents, setCountStudents] = useState(0);
+    const [countInstructor, setCountInstructor] = useState(0);
+    const [countSubjects, setCountSubjects] = useState(0);
+    const [subjectCounts, setSubjectCounts] = useState({
+      'Introduction to Computing': '',
+      'Computer Programming': '',
+      'Data Structure and Algorithm': '',
+      'Science Technology and Society': '',
+      'Networking I': ''
+    });
+
+
+    useEffect(() => {
+      const fetchData = async () => {
+        const response = await fetch('/yearlevel-count/');
+        const data = await response.json();
+  
+        if (data && data.length > 0) {
+          const labels = data.map(item => item.yearlevel);
+          const counts = data.map(item => item.count);
+  
+          const chartData = {
+            labels: labels,
+            datasets: [
+              {
+                data: counts,
+                backgroundColor: [
+                  '#FF6384',
+                  '#36A2EB',
+                  '#FFCE56',
+                  '#5DF196'
+                ],
+                hoverBackgroundColor: [
+                  '#FF6384',
+                  '#36A2EB',
+                  '#FFCE56',
+                  '#5DF196'
+                ]
+              }
+            ]
+          };
+  
+          setChartData(chartData);
+        }
+      };
+  
+      fetchData();
+    }, []);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        const response = await fetch('/gender-count/');
+        const data = await response.json();
+  
+        if (data && data.length > 0) {
+          const labels = data.map(item => item.gender);
+          const counts = data.map(item => item.count);
+  
+          const chartData = {
+            labels: labels,
+            datasets: [
+              {
+                data: counts,
+                backgroundColor: [
+                  '#FF6384',
+                  '#36A2EB',
+                ],
+                hoverBackgroundColor: [
+                  '#FF6384',
+                  '#36A2EB',
+                ]
+              }
+            ]
+          };
+  
+          setChartGenderData(chartData);
+        }
+      };
+  
+      fetchData();
+    }, []);
+
+    useEffect(() => {
+      async function fetchData() {
+        const response = await fetch('/students/count/');
+        const data = await response.json();
+        setCountStudents(data.count);
+      }
+  
+      fetchData();
+    }, []);
+
+    useEffect(() => {
+      async function fetchData() {
+        const response = await fetch('/instructor/count/');
+        const data = await response.json();
+        setCountInstructor(data.count);
+      }
+  
+      fetchData();
+    }, []);
+    useEffect(() => {
+      async function fetchData() {
+        const response = await fetch('/subjects/count/');
+        const data = await response.json();
+        setCountSubjects(data.count);
+      }
+  
+      fetchData();
+    }, []);
+
+    
+  
+    // Chart configuration
+    const options = {
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'right',
+        },
+      },
+    };
+  
+    
+
+    const subjectList = [
+      { id: 1, code: 'IT001', name: 'Introduction to Computing', slot: '11/30' },
+      { id: 2, code: 'IT002', name: 'Computer Programming', slot: '2/30' },
+      { id: 3, code: 'IT003', name: 'Data Structure and Algorithm', slot: '23/30' },
+      { id: 4, code: 'IT004', name: 'Science Technology and Society', slot: '14/30' },
+      { id: 5, code: 'IT005', name: 'Networking I', slot: '8/30' },
+    ];
 
   const handleFormChange = (event) => {
     setFormData({
@@ -48,55 +178,100 @@ const Dashboard = () =>{
       [event.target.name]: event.target.value,
     });
   };
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    const formDataList = { ...formData, subjects: [formData.subjects] };
-
-    fetch('/api/enrollment/', {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    fetch('students/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(formDataList),
+      body: JSON.stringify({
+        firstname: formData.firstname,
+        middlename: formData.middlename,
+        lastname: formData.lastname,
+        suffix: formData.suffix,
+        dateofbirth: formData.dateofbirth,
+        gender: formData.gender,
+        address: formData.address,
+        contactnumber: formData.contactnumber,
+        emailaddress: formData.emailaddress,
+        lrn: formData.lrn,
+        yearlevel: formData.yearlevel,
+        subjects: formData.subjects,  // array of subject ids
+      }),
     })
       .then((response) => response.json())
-      .then((data) => console.log(data));
+      .then((data) => {
+        console.log('Success:', data);
+        // do something after successful POST
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        // handle error
+      });
   };
-
-  const handleChange = (event) => {
-    setSelectedGender(event.target.value);
-
-  };
-  const handleChangeYearLevel = (event) => {
-    setSelectedYearLevel(event.target.value);
-
-  };
-  const handleCheckboxChange = (event) => {
-    setFormData({
-      ...formData,
-      [event.target.name]: event.target.value,
-    });
-
-    
-
-    if (event.target.checked) {
-      setFormData({ ...formData, subjects: [...formData.subjects, event.target.value] });
-    } else {
-      setFormData({ ...formData, subjects: formData.subjects.filter(subject => subject !== event.target.value) });
-    }
-    const rowId = parseInt(event.target.id);
-    const row = subjectstochoose.find(row => row.id === rowId);
-    if (row) {
+  
+  
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+  
+    if (name === 'subjects') {
+      let updatedSubjects = [...formData.subjects];
+  
       if (event.target.checked) {
-        setSelectedRows([...selectedRows, row]);
+        updatedSubjects.push(Number(value));
+  
+        // Get the subject name and add it to selectedSubjects
+        const selectedSubject = subjectList.find((subject) => subject.id === Number(value));
+        const updatedSelectedSubjects = [...formData.selectedSubjects, selectedSubject.name];
+        setFormData((prevState) => ({
+          ...prevState,
+          selectedSubjects: updatedSelectedSubjects,
+        }));
       } else {
-        setSelectedRows(selectedRows.filter(r => r.id !== rowId));
+        updatedSubjects = updatedSubjects.filter((subjectId) => subjectId !== Number(value));
+  
+        // Remove the subject name from selectedSubjects
+        const updatedSelectedSubjects = formData.selectedSubjects.filter((subjectName) => {
+          const subject = subjectList.find((subject) => subject.name === subjectName);
+          return subject && subject.id !== Number(value);
+        });
+        setFormData((prevState) => ({
+          ...prevState,
+          selectedSubjects: updatedSelectedSubjects,
+        }));
       }
+  
+      setFormData((prevState) => ({
+        ...prevState,
+        subjects: updatedSubjects,
+      }));
+    } else {
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
     }
   };
 
-  const selectedSubjects = selectedRows.map(row => row.subject).join(', ');
+  
+ 
+  const selectedSubjects = formData.selectedSubjects.join(', ');
+
+  const options2 = {
+    responsive: true,
+    maintainAspectRatio: false,
+
+    plugins: {
+      doughnutshadow: {
+        shadowOffsetX: 0,
+        shadowOffsetY: 0,
+        shadowBlur: 10,
+        shadowColor: 'rgba(0, 0, 0, 0.5)',
+      },
+    },
+  }
+  
 
   
 
@@ -108,6 +283,21 @@ const Dashboard = () =>{
           }
         });
        }, []);
+
+      useEffect(() => {
+        fetch('/everysubject/count/')
+          .then(res => res.json())
+          .then(data => {
+            const counts = {};
+            data.forEach(subject => {
+              counts[subject.subjectname] = subject.count;
+            });
+            setSubjectCounts(counts);
+            console.log(data); // check if the data is being fetched correctly
+          });      
+      }, []);
+  
+      
     return (
         <>
         <form onSubmit={handleSubmit} action="/api/enrollment/" method="POST">
@@ -148,8 +338,8 @@ const Dashboard = () =>{
               <div className="input-col">
                 <h2>Gender</h2>
                 <select name="gender" id="dropdown" value={formData.gender} onChange={handleFormChange}>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
+                  <option value="M">Male</option>
+                  <option value="F">Female</option>
                 </select>
               </div>
               <div className="input-col">
@@ -175,15 +365,15 @@ const Dashboard = () =>{
               <div className="input-col">
                 <h2>Year Level</h2>
                 <select name="yearlevel" id="dropdown" value={formData.yearlevel} onChange={handleFormChange}>
-                  <option value="1st Year">1st Year</option>
-                  <option value="2nd Year">2nd Year</option>
-                  <option value="3rd Year">3rd Year</option>
-                  <option value="4th Year">4th Year</option>
+                  <option value="1stYear">1st Year</option>
+                  <option value="2ndYear">2nd Year</option>
+                  <option value="3rdYear">3rd Year</option>
+                  <option value="4thYear">4th Year</option>
                 </select>
               </div>
               <div className="input-col">
                 <h2>Subjects</h2>
-                <input id="row.id"  type="text" onClick={() => setShowSubjectModal(true)} />
+                <input value={selectedSubjects} id="row.id"  type="text" onClick={() => setShowSubjectModal(true)} />
                 <div className={`modal ${showSubjectModal ? 'modal-open' : 'modal-close'}`}>
                   <div className="modal-content">
                   <FontAwesomeIcon className="close" style={{width: 35, height:35}} icon={faClose} onClick={() => setShowSubjectModal(false)} />
@@ -194,32 +384,33 @@ const Dashboard = () =>{
                         <tr>
                           <th></th>
                           <th>Code</th>
-                          <th>Subjects</th>
+                          <th>Subject</th>
                           <th>Slot</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {subjectstochoose.map(row => (
-                          <tr key={row.id}>
-                            <td style={{justifyContent:'center', display:'flex'}}> 
+                        {subjectList.map((subject) => (
+                          <tr key={subject.id}>
+                            <td style={{ justifyContent: 'center', display: 'flex' }}>
                               <label className="checkbox-label">
-                              <input value={row.id} name='subjects' type="checkbox" id={row.id} checked={formData.subjects.includes(row.id)} onChange={(event) => {
-                              const subjectId = parseInt(event.target.value);
-                              if(event.target.checked){
-                                setFormData({...formData, subjects: [...formData.subjects, subjectId]});
-                              } else {
-                                setFormData({...formData, subjects: formData.subjects.filter(subject => subject !== subjectId)});
-                              }
-                              }}  />
-                              <span className="checkmark"></span>
-                              </label> </td>  
-                            <td>{row.code}</td>
-                            <td>{row.subject}</td>
-                            <td>{row.slot}</td>
+                                <input
+                                  value={subject.id}
+                                  name="subjects"
+                                  type="checkbox"
+                                  checked={formData.subjects.includes(subject.id)}
+                                  onChange={handleInputChange}
+                                />
+                                <span className="checkmark"></span>
+                              </label>
+                            </td>
+                            <td>{subject.code}</td>
+                            <td>{subject.name}</td>
+                            <td>{subjectCounts[subject.name] ? subjectCounts[subject.name] : 0}/30</td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
+
                   </div>
                   </div> 
                 </div>
@@ -243,10 +434,10 @@ const Dashboard = () =>{
             
             <div style={styles.list}>
               <ul className="list">
-                <li className="sidebar-item"> <FontAwesomeIcon className="sidebar-icon" style={{color: '#6f6f6f', width:25, height:25}} icon={faChartLine} /> <a href="#" className="sidebar-text">Dashboard</a></li>
-                <li className="sidebar-item"> <FontAwesomeIcon className="sidebar-icon" style={{color: '#6f6f6f', width:25, height:25}} icon={faBook} /><a href="#" className="sidebar-text"> Subjects</a></li>
-                <li className="sidebar-item"> <FontAwesomeIcon className="sidebar-icon" style={{color: '#6f6f6f', width:25, height:25}} icon={faUser} /><a href="#" className="sidebar-text"> Student</a></li>
-                <li className="sidebar-item"> <FontAwesomeIcon className="sidebar-icon" style={{color: '#6f6f6f', width:25, height:25}} icon={faUserTie} /><a href="#" className="sidebar-text"> Instructor</a></li>
+                <li className="sidebar-item"> <FontAwesomeIcon className="sidebar-icon" style={{color: '#6f6f6f', width:25, height:25}} icon={faChartLine} /> <a href="/dashboard" className="sidebar-text">Dashboard</a></li>
+                <li className="sidebar-item"> <FontAwesomeIcon className="sidebar-icon" style={{color: '#6f6f6f', width:25, height:25}} icon={faBook} /><a href="/subjects" className="sidebar-text"> Subjects</a></li>
+                <li className="sidebar-item"> <FontAwesomeIcon className="sidebar-icon" style={{color: '#6f6f6f', width:25, height:25}} icon={faUser} /><a href="/students" className="sidebar-text"> Student</a></li>
+                <li className="sidebar-item"> <FontAwesomeIcon className="sidebar-icon" style={{color: '#6f6f6f', width:25, height:25}} icon={faUserTie} /><a href="/instructor" className="sidebar-text"> Instructor</a></li>
                 <li className="sidebar-item" style={{marginTop: 50}}> <FontAwesomeIcon className="sidebar-icon" style={{color: '#6f6f6f', width:25, height:25}} icon={faRightFromBracket} /><a href="/" className="sidebar-text">Logout</a></li>
               </ul>
             </div>
@@ -255,6 +446,59 @@ const Dashboard = () =>{
           
          
           <div style={styles.rightsidebar}>
+            
+
+            <div style={{marginLeft:20, display: 'flex'}}>
+                <div className="cards" style={{display: 'flex', alignItems: 'center'}}>
+                  <div style={{flex: '1'}}>
+                    <h2>STUDENTS</h2>
+                    <span style={{fontFamily: 'Poppins', fontSize:20}}>{countStudents}</span>
+                  </div>
+                  <div style={{ width: 100, height: 100 }}>
+                    <CircularProgressbar value={countStudents} 
+                    maxValue={50} text={`${countStudents}%`} strokeWidth={10} styles={{path: {stroke: 'blue'}, 
+                    text: {fontSize: '22px', fill: '#6f6f6f', fontFamily: 'Poppins'}}} />
+                  </div>
+                </div>
+                <div className="cards2" style={{display: 'flex', alignItems: 'center'}}>
+                  <div style={{flex: '1'}}>
+                    <h2>SUBJECTS</h2>
+                    <span style={{fontFamily: 'Poppins', fontSize:20}}>{countSubjects}</span>
+                  </div>
+                  <div style={{ width: 100, height: 100 }}>
+                    <CircularProgressbar value={countSubjects} 
+                    maxValue={50} text={`${countSubjects}%`} strokeWidth={10} styles={{path: {stroke: 'red'}, 
+                    text: {fontSize: '22px', fill: '#6f6f6f', fontFamily: 'Poppins'}}} />
+                  </div>
+                </div>
+                
+                <div className="cards3" style={{display: 'flex', alignItems: 'center'}}>
+                <div style={{flex: '1'}}>
+                    <h2>INSTRUCTOR</h2>
+                    <span style={{fontFamily: 'Poppins', fontSize:20}}>{countInstructor}</span>
+                  </div>
+                  <div style={{ width: 100, height: 100 }}>
+                    <CircularProgressbar value={countInstructor} 
+                    maxValue={50} text={`${countInstructor}%`} strokeWidth={10} styles={{path: {stroke: 'green'}, 
+                    text: {fontSize: '22px', fill: '#6f6f6f', fontFamily: 'Poppins'}}} />
+                  </div>
+                </div>
+                
+            </div>
+            <div style={{marginTop:50, display:'flex', justifyContent: 'space-evenly', marginLeft:20}}>
+              <div className="doughnut">
+                {Object.keys(chartData).length > 0 && (
+              <Doughnut data={chartData} options={options2} width={700} height={400}  />)}
+              </div>
+              <div className="doughnut">
+                {Object.keys(chartGenderData).length > 0 && (
+                <Doughnut data={chartGenderData} options={options2} width={700} height={400}  />)}
+              </div>
+            
+           
+            
+          
+            </div>
 
           </div>
           </div>
