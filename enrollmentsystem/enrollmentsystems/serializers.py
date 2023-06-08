@@ -135,3 +135,5 @@ class InstructorCountSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         return validated_data.get("count")
+    
+

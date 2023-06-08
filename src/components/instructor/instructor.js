@@ -361,7 +361,7 @@ const Instructor = () => {
             <div style={styles.subjectrightsidebar}>
 
                     <div style={{ marginTop:150, marginLeft: 75, marginRight: 75, display:'flex', justifyContent: 'space-between'}}>
-                        <button onClick={() => setShowAddInstructorModal(true)} style={styles.registerstudent}>Add Instructor<FontAwesomeIcon style={{marginLeft: 30, color: 'white'}} icon={faPlus} /></button>
+                        <button type="button" onClick={() => setShowAddInstructorModal(true)} style={styles.registerstudent}>Add Instructor<FontAwesomeIcon style={{marginLeft: 30, color: 'white'}} icon={faPlus} /></button>
                         <div className={`modal ${showAddInstructorModal ? 'modal-open' : 'modal-close'}`}>
                         <div className="modal-content">
                         <FontAwesomeIcon className="close" style={{width: 35, height:35}} icon={faClose} onClick={() => setShowAddInstructorModal(false)} />

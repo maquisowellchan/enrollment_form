@@ -10,7 +10,7 @@ SubjectRetrieveUpdateDestroyView,
 EnrollmentListCreateView,
 EnrollmentRetrieveUpdateDestroyView, StudentYearLevelCountAPIView, EnrolledStudentsCountView,
 StudentGenderCountAPIView, update_student, delete_student, InstructorListCreateView,SubjectCountAPIView,EnrolledSubjectsCountView, 
-InstructorRetrieveUpdateDestroyView, EnrolledInstructorCountView, SubjectUpdateView
+InstructorRetrieveUpdateDestroyView, EnrolledInstructorCountView, SubjectUpdateView,
 )
 
 

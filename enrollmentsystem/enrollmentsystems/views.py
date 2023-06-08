@@ -1,6 +1,6 @@
 from rest_framework import generics
 from .models import Student, Subject, Enrollment, Instructor
-from .serializers import StudentSerializer, SubjectSerializer, EnrollmentSerializer,YearLevelCountSerializer, StudentCountSerializer, GenderCountSerializer, InstructorSerializer, SubjectCountSerializer, OverallSubjectCountSerializer, InstructorCountSerializer, SubjectSerializerCount, StudentSerializerCount
+from .serializers import StudentSerializer, SubjectSerializer, EnrollmentSerializer,YearLevelCountSerializer, StudentCountSerializer, GenderCountSerializer, InstructorSerializer, SubjectCountSerializer, OverallSubjectCountSerializer, InstructorCountSerializer
 from django.db.models import Count
 from django.http import JsonResponse
 from rest_framework import viewsets
@@ -150,3 +150,4 @@ class SubjectUpdateView(generics.UpdateAPIView):
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
     lookup_field = 'id'
+

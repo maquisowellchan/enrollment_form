@@ -1,0 +1,22 @@
+[
+    {
+        "id": 6,
+        "firstname": "Wellchan",
+        "middlename": "Calotes",
+        "lastname": "Maquiso",
+        "suffix": "",
+        "dateofbirth": "2001-11-24",
+        "gender": "M",
+        "yearlevel": "1stYear",
+        "lrn": 3243243242322,
+        "address": "Zone 1 Aplaya Jasaan Misamis Oriental",
+        "emailaddress": "wellchanmaquiso47@gmail.com",
+        "contactnumber": 9756287284,
+        "subjects": [
+            1,
+            2,
+            3
+        ]
+    }
+
+]

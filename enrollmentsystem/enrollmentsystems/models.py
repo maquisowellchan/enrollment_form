@@ -66,3 +66,4 @@ class Enrollment(models.Model):
 
     def __str__(self):
         return f"{self.student} enrolled in {self.subject} on {self.date_enrolled}"
+    
